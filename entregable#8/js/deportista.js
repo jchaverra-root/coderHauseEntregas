@@ -134,7 +134,7 @@ function renderCardPerfil(newDeportista) {
                     <p class="card-text"><b>${newDeportista.genero}</b></p>
                     <p class="card-text"> ${newDeportista.edad} años / ${newDeportista.peso} kg / ${newDeportista.altura} cm</p>
                     <p class="card-text"> ${newDeportista.departamento}  / ${newDeportista.municipio}</p>
-                    <p class="card-text"> ${newDeportista.telefono} años / ${newDeportista.direccion} kg / ${newDeportista.correo} cm</p>
+                    <p class="card-text"> ${newDeportista.telefono} / ${newDeportista.direccion}  / ${newDeportista.correo} </p>
                 </div>
                 <div class="card-body m-auto col-md-6">
                     <h4 class="card-title">Nuevo Deportista Registrado !</h4>
