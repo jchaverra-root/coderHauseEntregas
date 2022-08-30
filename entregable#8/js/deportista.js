@@ -6,6 +6,8 @@ class Deportista {
         this.apellido = deportista.apellidoDeportista;
         this.edad = deportista.edadDeportista;
         this.genero = deportista.generoDeportista;
+        this.departamento = deportista.departamentoDeportista;
+        this.municipio = deportista.municipioDeportista;
         this.peso = deportista.pesoDeportista;
         this.altura = deportista.alturaDeportista;
         this.telefono = deportista.telefonoDeportista;
@@ -88,16 +90,42 @@ function renderFormulario(e) {
 </form>
     `;
     document.getElementById("perfilDeportista").innerHTML = formulario;
-    document.getElementById("formSubmit").addEventListener("click", guardarDatos);
+    document.getElementById("formSubmit").addEventListener("click", guardarDatos,cargarDepartamento);
     let listaDeportistas = cargarDeportistas();
     // OPERADOR LOGICO AND
     // if (listaDeportistas.length != 0) {
     //     renderTabla();
     // }
     listaDeportistas.length != 0 && renderTabla();
+    document.getElementById("selectDepartamentos").addEventListener("change", e => {
+        let casa = "";
+        let municipioS = [];
+        casa = e.target.value;
+        console.log(casa);
+        fetch("js/colombia.json")
+        .then((respuesta) =>  respuesta.json())
+        .then((datos) => {
+            for (let index = 0; index < datos.length; index++) {
+                if (datos[index].departamento == casa) {
+                    // console.log(datos[index].ciudades);
+                    municipioS.splice(0,municipioS.length);
+                    municipioS.push(datos[index].ciudades);
+                }
+            }
+            // console.log(municipioS);
+            selectMunicipios.innerHTML = "";
+            municipioS.forEach(valor => {
+                for (let index = 0; index < valor.length; index++) {
+                    // console.log(valor[index]);
+                    selectMunicipios.innerHTML += `<option value="${valor[index]}">${valor[index]}</option>`;
+                }
+            });
+        })
+    });
 }
 function renderCardPerfil(newDeportista) {
-    let card = `
+    let card = "";
+    card += `
         <br>
         <div class="card">
             <div class="d-md-flex">
@@ -105,6 +133,8 @@ function renderCardPerfil(newDeportista) {
                     <h4 class="card-title">${newDeportista.nombre}</h4>
                     <p class="card-text"><b>${newDeportista.genero}</b></p>
                     <p class="card-text"> ${newDeportista.edad} años / ${newDeportista.peso} kg / ${newDeportista.altura} cm</p>
+                    <p class="card-text"> ${newDeportista.departamento}  / ${newDeportista.municipio}</p>
+                    <p class="card-text"> ${newDeportista.telefono} años / ${newDeportista.direccion} kg / ${newDeportista.correo} cm</p>
                 </div>
                 <div class="card-body m-auto col-md-6">
                     <h4 class="card-title">Nuevo Deportista Registrado !</h4>
@@ -158,6 +188,8 @@ function guardarDatos(e) {
     let apellido = document.getElementById("apellidoD").value;
     let edad = document.getElementById("edadD").value;
     let genero = document.getElementById("generoD").value;
+    let departamento = document.getElementById("selectDepartamentos").value;
+    let municipio = document.getElementById("selectMunicipios").value;
     let peso = document.getElementById("pesoD").value;
     let altura = document.getElementById("alturaD").value;
     let telefono = document.getElementById("telefonoD").value;
@@ -189,6 +221,8 @@ function guardarDatos(e) {
         apellidoDeportista: apellido,
         edadDeportista: edad,
         generoDeportista: genero,
+        departamentoDeportista: departamento,
+        municipioDeportista: municipio,
         pesoDeportista: peso,
         alturaDeportista: altura,
         telefonoDeportista: telefono,
@@ -250,41 +284,41 @@ function cargarDepartamento() {
     .then((datos) => {
         datos.forEach(valor => {
             let option1 = document.createElement("option");
-            option1.innerHTML = `<option value="${valor.departamento}">${valor.departamento}</option>`;
+            option1.innerHTML = `<option id="optionDepartamento${valor.id}" value="${valor.departamento}">${valor.departamento}</option>`;
             selectDepartamentos.appendChild(option1);
         });
         /* document.getElementById("selectDepartamentos"),innerHTML = $options; */
     });
 }
-function cargarMunicipios() {
-    let casa = "";
-    let municipioS = [];
-    document.getElementById("selectDepartamentos").addEventListener("change", e => {
-        casa = e.target.value;
-        fetch("js/colombia.json")
-        .then((respuesta) =>  respuesta.json())
-        .then((datos) => {
-            for (let index = 0; index < datos.length; index++) {
-                if (datos[index].departamento == casa) {
-                    console.log(datos[index].ciudades);
-                    municipioS.push(datos[index].ciudades);
-                }
-            }
-            console.log(municipioS);
-            municipioS.forEach(valor => {
-                for (let index = 0; index < valor.length; index++) {
-                    console.log(valor[index]);
-                    let option2 = document.createElement("option");
-                    option2.innerHTML = `<option value="${valor[index]}">${valor[index]}</option>`;
-                    selectMunicipios.appendChild(option2);
-                }
-            });
-        });
-    });
+function renderCards(newDeportista) {
+    let card = "";
+    card += `
+        <br>
+        <div class="card">
+            <div class="d-md-flex">
+                <div class="card-body text-left col-md-6">
+                    <h4 class="card-title">${newDeportista.nombre}</h4>
+                    <p class="card-text"><b>${newDeportista.genero}</b></p>
+                    <p class="card-text"> ${newDeportista.edad} años / ${newDeportista.peso} kg / ${newDeportista.altura} cm</p>
+                </div>
+                <div class="card-body m-auto col-md-6">
+                    <h4 class="card-title">Nuevo Deportista Registrado !</h4>
+                </div>
+            </div>
+        </div>
+        <br>
+    `;
+    document.getElementById("tablaDeportistas").innerHTML = card;
+}
+function btnTabla() {
+    document.getElementById("btn-tabla").addEventListener("click", renderTabla)
+}
+function btnCards() {
+    document.getElementById("btn-cards").addEventListener("click", renderCards)
 }
 
 //Carga Funciones al Cargar la Pagina (Fomulario Registro Deportista)
-document.addEventListener("DOMContentLoaded",renderFormulario(),cargarDepartamento(),cargarMunicipios());
+document.addEventListener("DOMContentLoaded",renderFormulario(),cargarDepartamento(),btnTabla(),btnCards());
 // Data Table Lista deeportistas
 $(document).ready(function () {
     $('#example').DataTable();
